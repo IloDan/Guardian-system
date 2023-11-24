@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="micro-api-alarm" />
+        <module name="discovery (2)" />
+        <module name="discovery" />
+        <module name="micro-api-operator" />
+        <module name="micro-ui" />
+        <module name="micro-scheduler" />
+        <module name="discovery (1)" />
+        <module name="gateway" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="library" target="17" />
+      <module name="micro-api" target="11" />
+      <module name="rest-clients" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="discovery" options="-parameters" />
+      <module name="discovery (1)" options="-parameters" />
+      <module name="discovery (2)" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="guardian" options="-parameters" />
+      <module name="library" options="" />
+      <module name="micro-api" options="-parameters" />
+      <module name="micro-api-alarm" options="-parameters" />
+      <module name="micro-api-operator" options="-parameters" />
+      <module name="micro-scheduler" options="-parameters" />
+      <module name="micro-ui" options="-parameters" />
+      <module name="rest-clients" options="-parameters" />
+    </option>
+  </component>
+</project>

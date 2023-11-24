@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Users\luca.milan\.kind\kompose.exe convert -f docker-compose-apps.yml -o .\Kubernetes\Kompose
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: micro-api-operator
+  name: micro-api-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: micro-api-operator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Users\luca.milan\.kind\kompose.exe convert -f docker-compose-apps.yml -o .\Kubernetes\Kompose
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/network: "true"
+        io.kompose.service: micro-api-operator
+    spec:
+      containers:
+        - env:
+            - name: EUREKA_CLIENT_ENABLED
+              value: "true"
+            - name: EUREKA_INSTANCE_PREFERIPADDRESS
+              value: "true"
+            - name: EUREKA_URI
+              value: http://discovery:8761/eureka
+            - name: JAVA_OPTS
+              value: -Xmx256M -Xms256M -Xmn128M
+            - name: SERVER_PORT
+              value: "9006"
+          image: guardian/micro-api-operator:0.0.1-SNAPSHOT
+          name: micro-api-operator
+          ports:
+            - containerPort: 9006
+          resources: {}
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
+      hostname: micro-api-operator
+      restartPolicy: Always
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: logs
+status: {}

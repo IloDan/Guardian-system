@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Apps k8s Cluster without LoadImages" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="./start-cluster.ps1" workingDirectory="$ProjectFileDir$" executablePath="$PROJECT_DIR$/../../../WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe">
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

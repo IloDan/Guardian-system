@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run All Microservices" type="CompoundRunConfigurationType">
+    <toRun name="DiscoveryServiceApplication" type="Application" />
+    <toRun name="GatewayApplication" type="Application" />
+    <toRun name="MicroApiAlarmsApplication" type="Application" />
+    <toRun name="MicroApiOperatorsApplication" type="Application" />
+    <toRun name="MicroUiApplication" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

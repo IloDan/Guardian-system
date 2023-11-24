@@ -1,0 +1,48 @@
+body {
+  padding-top: 5rem;
+}
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.starter-info {
+    padding: 3rem 1.5rem;
+    text-align: left;
+}
+
+h1{
+	color:#0000FF;
+}
+
+h2{
+	color:#FF0000;
+}
+table {
+    border-collapse: collapse;
+    width: 60%;
+}
+
+td {
+    text-align: left;
+    padding: 8px;
+}
+
+table th {
+    background-color: #54585d;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 13px;
+    border: 1px solid #54585d;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+aside {
+    width: 30%;
+    padding-left: 15px;
+    margin-left: 15px;
+    float: right;
+    font-style: italic;
+    background-color: lightgray;
+}

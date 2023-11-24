@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+      - id: micro-api-operator
+        uri: lb://micro-api-operator
+        predicates:
+        - Path=/operators/**
+      - id: micro-api-alarm
+        uri: lb://micro-api-alarm
+        predicates:
+        - Path=/alarms/**

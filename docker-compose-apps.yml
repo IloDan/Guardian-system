@@ -1,0 +1,208 @@
+version: "3"
+
+services:
+  #---------------------------------- DISCOVERY SERVICE
+  discovery:
+    hostname: discovery
+    container_name: discovery
+    image: guardian/discovery:0.0.1-SNAPSHOT
+    build:
+      context: ./
+      args:
+        - PORT=8761
+        - SERVICE=discovery
+    networks:
+      - network
+    ports:
+      - "8761:8761"
+    volumes:
+      - logs:/logs
+    deploy:
+      replicas: 1
+    environment:
+      - SERVER_PORT=8761
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+      - "SPRING_PROFILES_ACTIVE=docker.compose"
+
+  #---------------------------------- GATEWAY SERVICE
+  gateway:
+    hostname: gateway
+    container_name: gateway
+    image: guardian/gateway:0.0.1-SNAPSHOT
+    build:
+      context: ./
+      args:
+        - PORT=9000
+        - SERVICE=gateway
+    networks:
+      - network
+    ports:
+      - "9000:9000"
+    volumes:
+      - logs:/logs
+    deploy:
+      replicas: 1
+    environment:
+      - SERVER_PORT=9000
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+      - "SPRING_PROFILES_ACTIVE=docker.compose"
+
+  #---------------------------------- MICRO
+  micro-scheduler:
+    hostname: micro-scheduler
+    container_name: micro-scheduler
+    image: guardian/micro-scheduler:0.0.1-SNAPSHOT
+    depends_on:
+      - micro-api
+    build:
+      context: ./
+      args:
+        - SERVICE=micro-scheduler
+        - PORT=9003
+    networks:
+      - network
+    ports:
+      - "9003:9003"
+    deploy:
+      replicas: 1
+    volumes:
+      - logs:/logs
+    environment:
+      - SERVER_PORT=9003
+      - EUREKA_CLIENT_ENABLED=true
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - EUREKA_URI=http://discovery:8761/eureka
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+      - SPRING_PROFILES_ACTIVE=docker.compose
+
+  micro-api-alarm:
+    hostname: micro-api-alarm
+    container_name: micro-api-alarm
+    image: guardian/micro-api-alarm:0.0.1-SNAPSHOT
+    depends_on:
+      - discovery
+    build:
+      context: .
+      args:
+        - SERVICE=micro-api-alarm
+        - PORT=9002
+    networks:
+      - network
+    ports:
+      - "9002:9002"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    volumes:
+      - logs:/logs
+    environment:
+      - SERVER_PORT=9002
+      - EUREKA_URI=http://discovery:8761/eureka
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - EUREKA_CLIENT_ENABLED=true
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+
+  micro-api-operator:
+    hostname: micro-api-operator
+    container_name: micro-api-operator
+    image: guardian/micro-api-operator:0.0.1-SNAPSHOT
+    depends_on:
+      - discovery
+    build:
+      context: .
+      args:
+        - SERVICE=micro-api-operator
+        - PORT=9006
+    networks:
+      - network
+    ports:
+      - "9006:9006"
+    deploy:
+      replicas: 1
+    volumes:
+      - logs:/logs
+    environment:
+      - SERVER_PORT=9006
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - EUREKA_CLIENT_ENABLED=true
+      - EUREKA_URI=http://discovery:8761/eureka
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+
+  micro-ui:
+    container_name: micro-ui
+    hostname: micro-ui
+    image: guardian/micro-ui:0.0.1-SNAPSHOT
+    depends_on:
+      - micro-api-operator
+      - micro-api-alarm
+    build:
+      context: .
+      args:
+        - SERVICE=micro-ui
+        - PORT=9001
+    networks:
+      - network
+    ports:
+      - "9001:9001"
+    deploy:
+      replicas: 1
+    volumes:
+      - logs:/logs
+    environment:
+      - SERVER_PORT=9001
+      - EUREKA_CLIENT_ENABLED=true
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - EUREKA_URI=http://discovery:8761/eureka
+      - JAVA_OPTS=-Xmx256M -Xms256M -Xmn128M
+      - SPRING_PROFILES_ACTIVE=docker.compose
+
+  #---------------------------------- LOGGING ELK
+
+  #---------------------------------- MONITORING
+
+  grafana:
+    hostname: grafana
+    depends_on:
+      - prometheus
+    build:
+      context: ./Infrastructure/grafana
+    container_name: monitoring-grafana
+    image: guardian/grafana:0.0.1-SNAPSHOT
+    ports:
+      - "3000:3000"
+    networks:
+      - network
+    restart: always
+
+  prometheus:
+    hostname: prometheus
+    depends_on:
+      - discovery
+      - micro-api-alarm
+      - micro-api-operator
+      - micro-ui
+      - micro-scheduler
+    build:
+      context: ./Infrastructure/prometheus
+    container_name: monitoring-prometheus
+    restart: always
+    image: guardian/prometheus:0.0.1-SNAPSHOT
+    ports:
+      - "9090:9090"
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+    external: false
+volumes:
+  logs:

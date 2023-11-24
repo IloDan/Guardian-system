@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 30s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: [ 'prometheus:9090' ]
+        labels:
+          hostname: 'prometheus'
+  - job_name: 'guardian'
+    scrape_interval: 30s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['micro-ui:9001']
+        labels:
+            hostname: 'micro-ui'
+      - targets: ['micro-api-alarm:9002']
+        labels:
+          hostname: 'micro-api-alarm'
+      - targets: ['micro-api-operator:9006']
+        labels:
+          hostname: 'micro-api-operator'
+      - targets: ['micro-scheduler:9003']
+        labels:
+          hostname: 'micro-scheduler'
+      - targets: ['discovery:8761']
+        labels:
+          hostname: 'discovery'
+
+
